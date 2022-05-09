@@ -1,0 +1,50 @@
+syntax = "proto3";
+package profile;
+option go_package = "./pkg/pb";
+
+service  ProfileService {
+    rpc AddProfile(AddReq) returns (Resp){}
+    rpc Update(UpdateReq) returns (Resp){}
+    rpc Remove(DeleteReq) returns (Resp){}
+    rpc FindProfile(FindProfileReq) returns (FindProfileResp){}
+}
+message EmptyReq {}
+
+message Profile{
+    int64 id = 1;
+    string name = 2;
+    string lastname = 3;
+    string description = 4;
+    int64 votes = 5;
+    int64 students = 6;
+    string website = 7; 
+    string youtube = 8; 
+    string linkedin = 9; 
+    string twitter = 10; 
+    string facebook = 11; 
+    int64 created = 12;
+    int64 modified = 13;
+}
+message AddReq{
+    Profile profile = 1;
+}
+message UpdateReq{
+    int64 uid = 1;
+    Profile profile = 2;
+}
+message DeleteReq{
+    int64 uid = 1;
+}
+message Resp{
+    int64 status = 1;
+    string error = 2;
+    string msg  = 3;
+}
+message FindProfileReq{ int64 id = 1; }
+
+message FindProfileResp{
+    int64 status = 1;
+    string error = 2;
+    Profile profile = 3;
+}
+
