@@ -40,7 +40,7 @@ message Resp{
     string error = 2;
     string msg  = 3;
 }
-message FindProfileReq{ uint64 id = 1; }
+message FindProfileReq{ uint64 uid = 1; }
 
 message FindProfileResp{
     int64 status = 1;
