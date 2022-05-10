@@ -11,12 +11,12 @@ service  ProfileService {
 message EmptyReq {}
 
 message Profile{
-    int64 id = 1;
+    uint64 id = 1;
     string name = 2;
     string lastname = 3;
     string description = 4;
-    int64 votes = 5;
-    int64 students = 6;
+    uint64 votes = 5;
+    uint64 students = 6;
     string website = 7; 
     string youtube = 8; 
     string linkedin = 9; 
@@ -29,18 +29,18 @@ message AddReq{
     Profile profile = 1;
 }
 message UpdateReq{
-    int64 uid = 1;
+    uint64 uid = 1;
     Profile profile = 2;
 }
 message DeleteReq{
-    int64 uid = 1;
+    uint64 uid = 1;
 }
 message Resp{
     int64 status = 1;
     string error = 2;
     string msg  = 3;
 }
-message FindProfileReq{ int64 id = 1; }
+message FindProfileReq{ uint64 id = 1; }
 
 message FindProfileResp{
     int64 status = 1;
