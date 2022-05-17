@@ -1,9 +1,12 @@
 package domain
 
-import "context"
+import (
+	"context"
+	"time"
+)
 
 type Profile struct {
-	Id          uint64 `json:"id"`
+	Uid         uint64 `json:"uid"`
 	Name        string `json:"name"`
 	Lastname    string `json:"lastname"`
 	Title       string `json:"title"`
@@ -18,6 +21,26 @@ type Profile struct {
 	Created     int64  `json:"created"`
 	Modified    int64  `json:"modified"`
 }
+
+func NewProfile(name, lastname, title, description, website, youtube, linkedin, twitter, facebook string, votes, students uint64) *Profile {
+
+	return &Profile{
+		Name:        name,
+		Lastname:    lastname,
+		Description: description,
+		Votes:       votes,
+		Students:    students,
+		Website:     website,
+		Youtube:     youtube,
+		Linkedin:    linkedin,
+		Twitter:     twitter,
+		Facebook:    facebook,
+		Created:     time.Now().Unix(),
+		Modified:    time.Now().Unix(),
+	}
+
+}
+
 type Repository interface {
 	SaveProfile(ctx context.Context, profile *Profile) error
 	UpdateProfile(ctx context.Context, profile *Profile, id uint64) error

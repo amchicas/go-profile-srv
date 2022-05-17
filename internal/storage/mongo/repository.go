@@ -5,7 +5,6 @@ import (
 	"fmt"
 
 	"github.com/amchicas/go-profile-srv/internal/domain"
-
 	"go.mongodb.org/mongo-driver/bson"
 	"go.mongodb.org/mongo-driver/mongo"
 )
@@ -29,7 +28,7 @@ func (r *repository) SaveProfile(ctx context.Context, profile *domain.Profile) e
 }
 func (r *repository) DeleteProfileById(ctx context.Context, uid uint64) error {
 	c := r.db.Collection("profile")
-	_, err := c.DeleteOne(ctx, bson.M{"id": uid})
+	_, err := c.DeleteOne(ctx, bson.M{"uid": uid})
 	if err != nil {
 		return err
 	}
@@ -38,25 +37,34 @@ func (r *repository) DeleteProfileById(ctx context.Context, uid uint64) error {
 func (r *repository) GetProfileById(ctx context.Context, id uint64) (*domain.Profile, error) {
 	var profile domain.Profile
 	c := r.db.Collection("profile")
-	err := c.FindOne(ctx, bson.M{"id": id}).Decode(&profile)
+	err := c.FindOne(ctx, bson.M{"uid": id}).Decode(&profile)
 	if err != nil {
 		return &domain.Profile{}, err
 	}
 	return &profile, nil
 }
 func (r *repository) UpdateProfile(ctx context.Context, profile *domain.Profile, id uint64) error {
-	c := r.db.Collection("posts")
-	result, err := c.UpdateOne(ctx, bson.M{"id": id}, bson.D{
-		{"$set", bson.D{
-			{"title", profile.Title},
-			{"description", profile.Description},
-			{"update_at", profile.Modified},
-		}},
-	})
+	c := r.db.Collection("profile")
+	fmt.Println(profile)
+	_, err := c.UpdateOne(ctx, bson.M{"uid": id},
+		bson.M{
+			"$set": bson.M{
+				"name":        profile.Name,
+				"description": profile.Description,
+				"votes":       profile.Votes,
+				"students":    profile.Students,
+				"website":     profile.Website,
+				"youtube":     profile.Youtube,
+				"linkedin":    profile.Linkedin,
+				"twitter":     profile.Twitter,
+				"facebook":    profile.Facebook,
+				"created":     profile.Created,
+				"modified":    profile.Modified,
+			}},
+	)
 	if err != nil {
 		return err
 	}
-	fmt.Println(result)
 
 	return nil
 }

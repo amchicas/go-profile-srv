@@ -1,16 +1,18 @@
 package main
 
 import (
-	"net"
+	"context"
 
 	"github.com/amchicas/go-profile-srv/config"
+	"github.com/amchicas/go-profile-srv/internal/adder"
 	"github.com/amchicas/go-profile-srv/internal/domain"
-	"github.com/amchicas/go-profile-srv/internal/service"
+	"github.com/amchicas/go-profile-srv/internal/eraser"
+	"github.com/amchicas/go-profile-srv/internal/fetcher"
+	"github.com/amchicas/go-profile-srv/internal/grpc"
+	"github.com/amchicas/go-profile-srv/internal/modifier"
 	"github.com/amchicas/go-profile-srv/internal/storage/mongo"
 	"github.com/amchicas/go-profile-srv/pkg/log"
-	"github.com/amchicas/go-profile-srv/pkg/pb"
-	"google.golang.org/grpc"
-	"google.golang.org/grpc/reflection"
+	"golang.org/x/sync/errgroup"
 )
 
 func main() {
@@ -21,19 +23,22 @@ func main() {
 		logger.Error("Failed at config" + err.Error())
 	}
 	repo := newMongo(c.MongoHost, c.MongoPort, c.Database)
-	lis, err := net.Listen("tcp", c.Port)
-	if err != nil {
+	adderService := adder.NewService(repo, logger)
+	fetcherService := fetcher.NewService(repo, logger)
+	modifierService := modifier.NewService(repo, logger)
+	eraserService := eraser.NewService(repo, logger)
 
-		logger.Error("Failed at server profile" + err.Error())
-	}
-	srv := service.New(repo, logger)
-	grpcServer := grpc.NewServer()
-	pb.RegisterProfileServiceServer(grpcServer, srv)
-	reflection.Register(grpcServer)
-	if err := grpcServer.Serve(lis); err != nil {
-		logger.Error("Failed to server :" + err.Error())
+	ctx, cancel := context.WithCancel(context.Background())
+	defer cancel()
+	g, ctx := errgroup.WithContext(ctx)
+	g.Go(func() error {
+		srv := grpc.NewServer(c.Port, adderService, fetcherService, modifierService, eraserService, logger)
+		return srv.Serve()
 
-	}
+	})
+
+	logger.Fatal(g.Wait().Error())
+
 }
 
 func newMongo(host, port, database string) domain.Repository {

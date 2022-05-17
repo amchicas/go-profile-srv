@@ -14,16 +14,17 @@ message Profile{
     uint64 id = 1;
     string name = 2;
     string lastname = 3;
-    string description = 4;
-    uint64 votes = 5;
-    uint64 students = 6;
-    string website = 7; 
-    string youtube = 8; 
-    string linkedin = 9; 
-    string twitter = 10; 
-    string facebook = 11; 
-    int64 created = 12;
-    int64 modified = 13;
+    string title = 4;
+    string description = 5;
+    uint64 votes = 6;
+    uint64 students = 7;
+    string website = 8; 
+    string youtube = 9; 
+    string linkedin = 10; 
+    string twitter = 11; 
+    string facebook = 12; 
+    int64 created = 13;
+    int64 modified = 14;
 }
 message AddReq{
     Profile profile = 1;
